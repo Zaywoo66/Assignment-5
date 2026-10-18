@@ -1,0 +1,50 @@
+@startuml
+title Strategy Pattern - Route Planning
+skinparam classAttributeIconSize 0
+
+class Main <<Client>> {
+  +main(args: String[]): void
+}
+
+class Navigator <<Context>> {
+  -routeStrategy: RouteStrategy
+  +Navigator(routeStrategy: RouteStrategy)
+  +setStrategy(routeStrategy: RouteStrategy): void
+  +planRoute(request: RouteRequest): RoutePlan
+}
+
+interface RouteStrategy <<Strategy>> {
+  +plan(request: RouteRequest): RoutePlan
+}
+
+class CarStrategy <<Concrete Strategy>>
+class WalkingStrategy <<Concrete Strategy>>
+class CyclingStrategy <<Concrete Strategy>>
+
+class RouteRequest <<Input>> {
+  +origin: Location
+  +destination: Location
+}
+
+class Location <<Value Object>> {
+  +name: String
+  +latitude: double
+  +longitude: double
+}
+
+class RoutePlan <<Result>> {
+  +strategyName: String
+  +distanceKm: double
+  +estimatedDuration: Duration
+  +instructions: List<String>
+}
+
+Main --> Navigator : selects and switches
+Navigator o--> RouteStrategy : delegates to
+RouteStrategy <|.. CarStrategy
+RouteStrategy <|.. WalkingStrategy
+RouteStrategy <|.. CyclingStrategy
+Navigator ..> RouteRequest : accepts
+Navigator ..> RoutePlan : returns
+RouteRequest *-- Location
+@enduml
